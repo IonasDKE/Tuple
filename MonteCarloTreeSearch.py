@@ -73,12 +73,30 @@ class MCTS:
                 cards_copy.remove(e)
             
         return hands
+    
+    # return the cards of the split suit
+    def getPlayableCards(self, nodes):
+        split_suit = self.game_state[0].suit
+        playable_cards = []
+
+        for node in nodes:
+            if node.getCard().suit == split_suit:
+                playable_cards.append(node)
+
+        if playable_cards:
+            return playable_cards
+        
+        else:
+            return nodes
         
     def solveSplit(self):
         nodes = self.root.getChildren()
         
+        if len(self.game_state) != 0:
+            playable_nodes = self.getPlayableCards(nodes)
+
         for _ in range(100):
-            selected_node = random.sample(nodes, 1)[0]
+            selected_node = random.sample(playable_nodes, 1)[0]
             self.updateNode(selected_node)
         
         largest_score = 0
@@ -145,10 +163,14 @@ class Tree():
             for card in self.hand:
                 new_node = Node(parent, card)
                 parent.addChild(new_node)       
-                extendNode(new_node, hand.remove(card))
+                self.extendNode(new_node, hand.remove(card))
                 
         else:
             return
+        
+    def extendNode(new_node, hand):
+
+        return 
         
 class Node():
     def __init__(self, parent, card):
